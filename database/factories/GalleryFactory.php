@@ -2,6 +2,7 @@
 
 use Faker\Generator as Faker;
 
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -13,15 +14,11 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
-	static $password;
-
+$factory->define(App\Gallery::class, function (Faker $faker) {
+	
     return [
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
-        'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = bcrypt('secret'),
-        'remember_token' => str_random(10),
-        'accepted_terms_and_conditions' => true
+        'gallery_name' => $faker->firstName,
+        'description' => $faker->sentence($nbWords = 6, $variableNbWords = true),
+        'user_id' => $faker->numberBetween($min = 1, $max = 10)
     ];
 });
