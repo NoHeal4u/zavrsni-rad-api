@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Gallery;
 use App\Image;
 
+use Validator, DB, Hash;
+use JWTAuth;
+
 class GalleryController extends Controller
 {
     /**
@@ -15,7 +18,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        return Gallery::with('GalleryHasManyImages')->get();
+        return Gallery::with('galleryHasManyImages')->get();
     }
 
     /**
@@ -38,13 +41,63 @@ class GalleryController extends Controller
     {
        $fetchedGalleryObject = $request->only('gallery_name', 'description', 'images');
 
-       $rules = [
+       $rulesForGallery = [
             'gallery_name' => 'required|min:2|max:255',
             'description' => 'max:1000',
-            'images' => 'required|',
+            'images' => 'required',
+            'images.*' => ['required', 'url', 'regex: /(?:(?:(?:\.jpg))|(?:(?:\.jpeg))|(?:(?:\.png)))/ '  ]
             
             
         ]; 
+
+        $validator = Validator::make($fetchedGalleryObject, $rulesForGallery);
+
+        if($validator->fails()) {
+            return response()->json(['success'=> false, 'error'=> $validator->messages()]);
+        }
+
+        $gallery = new Gallery();
+
+        $gallery->gallery_name = $request->input('gallery_name');
+        $gallery->description = $request->input('description');
+        $gallery->user_id = auth()->user()->id;
+
+        // $gallery_name = $request->gallery_name;
+        // $description = $request->description;
+        // $user_id = auth()->user()->id;
+
+
+        
+        // Gallery::create(['gallery_name' => $gallery_name, 'description' => $description, 'user_id' => $user_id]);
+       
+        $gallery->save();
+
+        $imagesArray = [];
+
+        // print_r($request->images);
+
+        foreach ($request->images as $imageLink) {
+            array_push($imagesArray, new Image(['images' => "$imageLink"]));
+        }
+
+        // print_r($imagesArray);
+
+        // $gallery->galleryHasManyImages()->saveMany([
+        //     for ($i=0; $i <count($imagesArray) ; $i++) { 
+        //        $imagesArray[$i];
+        //     }
+        //      ]);
+
+        foreach ($imagesArray as $imageObject) {
+            $gallery->galleryHasManyImages()->save($imageObject);
+        }
+
+        
+        
+        return response()->json(['success'=> true, 'message'=> 'Gallery Saved!!']);
+
+        
+
     }
 
     /**
@@ -55,7 +108,7 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::with('GalleryHasManyImages')->find($id);
+        $gallery = Gallery::with('galleryHasManyImages')->find($id);
 
         if(!isset($gallery)) {
             abort(404, "Gallery not found");
@@ -84,7 +137,60 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       $gallery = Gallery::find($id);
+
+       $gallery->gallery_name = $request->input('gallery_name');
+       $gallery->description = $request->input('description');
+       $gallery->images = $request->input('images');
+       
+
+       $rulesForGallery = [
+            'gallery_name' => 'required|min:2|max:255',
+            'description' => 'max:1000',
+            'images' => 'required',
+            'images.*' => ['required', 'url', 'regex: /(?:(?:(?:\.jpg))|(?:(?:\.jpeg))|(?:(?:\.png)))/ '  ]
+            
+            
+        ]; 
+
+        $galleryArray = [ 'gallery_name' => $gallery->gallery_name, 'description' => $gallery->description, 'images' => $gallery->images
+        ];
+
+        var_dump($galleryArray);
+
+        $validator = Validator::make($galleryArray, $rulesForGallery);
+
+        if($validator->fails()) {
+            return response()->json(['success'=> false, 'error'=> $validator->messages()]);
+        }
+       
+        $gallery->save();
+
+        $gallery->galleryHasManyImages()->delete();
+
+        $imagesArray = [];
+
+        // print_r($request->images);
+
+        foreach ($request->images as $imageLink) {
+            array_push($imagesArray, new Image(['images' => "$imageLink"]));
+        }
+
+        // print_r($imagesArray);
+
+        // $gallery->galleryHasManyImages()->saveMany([
+        //     for ($i=0; $i <count($imagesArray) ; $i++) { 
+        //        $imagesArray[$i];
+        //     }
+        //      ]);
+
+        foreach ($imagesArray as $imageObject) {
+            $gallery->galleryHasManyImages()->save($imageObject);
+        }
+
+        
+        
+        return response()->json(['success'=> true, 'message'=> 'Gallery Saved!!']);
     }
 
     /**
