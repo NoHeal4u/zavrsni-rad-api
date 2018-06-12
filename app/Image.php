@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Image extends Model
 {
-    return $this->belongsTo('App\Gallery');
+    public function imageBelongsToGallery()
+    {
+    	return $this->belongsTo(Gallery::class);
+    } 
 }

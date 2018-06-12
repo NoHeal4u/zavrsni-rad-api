@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    public function images()
+    public function GalleryHasManyImages()
     {
         return $this->hasMany('App\Image');
     }
+
+    public function GalleryBelongsToUser()
+    {
+    	return $this->belongsTo(User::class);
+    } 
 }

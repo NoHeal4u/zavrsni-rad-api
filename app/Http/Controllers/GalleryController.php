@@ -15,7 +15,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        return Gallery::with('Image')->get();
+        return Gallery::with('GalleryHasManyImages')->get();
     }
 
     /**
@@ -47,7 +47,7 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::find($id);
+        $gallery = Gallery::with('GalleryHasManyImages')->find($id);
 
         if(!isset($gallery)) {
             abort(404, "Gallery not found");
