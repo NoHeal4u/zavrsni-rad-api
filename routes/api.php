@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::post('/login', 'Auth\LoginController@authenticate');
 
-Route::middleware('api')->get('/galleries', 'GalleryController@index');
-Route::middleware('api')->get('/galleries/{id}', 'GalleryController@show');
+Route::middleware('jwt')->get('/galleries', 'GalleryController@index');
+Route::middleware('jwt')->get('/galleries/{id}', 'GalleryController@show');
