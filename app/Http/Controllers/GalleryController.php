@@ -36,7 +36,15 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $fetchedGalleryObject = $request->only('gallery_name', 'description', 'images');
+
+       $rules = [
+            'gallery_name' => 'required|min:2|max:255',
+            'description' => 'max:1000',
+            'images' => 'required|',
+            
+            
+        ]; 
     }
 
     /**
