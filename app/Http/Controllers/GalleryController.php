@@ -82,15 +82,11 @@ class GalleryController extends Controller
 
         // print_r($imagesArray);
 
-        // $gallery->galleryHasManyImages()->saveMany([
-        //     for ($i=0; $i <count($imagesArray) ; $i++) { 
-        //        $imagesArray[$i];
-        //     }
-        //      ]);
+        $gallery->galleryHasManyImages()->saveMany($imagesArray);
 
-        foreach ($imagesArray as $imageObject) {
-            $gallery->galleryHasManyImages()->save($imageObject);
-        }
+        // foreach ($imagesArray as $imageObject) {
+        //     $gallery->galleryHasManyImages()->save($imageObject);
+        // }
 
         
         
@@ -137,11 +133,12 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-       $gallery = Gallery::find($id);
+       $gallery = Gallery::with('galleryHasManyImages')->find($id);
+        // var_dump($gallery);
 
        $gallery->gallery_name = $request->input('gallery_name');
        $gallery->description = $request->input('description');
-       $gallery->images = $request->input('images');
+       
        
 
        $rulesForGallery = [
@@ -153,20 +150,22 @@ class GalleryController extends Controller
             
         ]; 
 
-        $galleryArray = [ 'gallery_name' => $gallery->gallery_name, 'description' => $gallery->description, 'images' => $gallery->images
+        $galleryArray = [ 'gallery_name' => $gallery->gallery_name, 'description' => $gallery->description, 'images' => $request->input('images')
         ];
 
-        var_dump($galleryArray);
+        // var_dump($galleryArray);
 
         $validator = Validator::make($galleryArray, $rulesForGallery);
 
         if($validator->fails()) {
             return response()->json(['success'=> false, 'error'=> $validator->messages()]);
         }
-       
+
+        // $gallery->images = $request->input('images');
         $gallery->save();
 
-        $gallery->galleryHasManyImages()->delete();
+
+        // $gallery->galleryHasManyImages()->delete();
 
         $imagesArray = [];
 
@@ -176,6 +175,10 @@ class GalleryController extends Controller
             array_push($imagesArray, new Image(['images' => "$imageLink"]));
         }
 
+        $gallery->galleryHasManyImages()->delete();
+        $gallery->galleryHasManyImages()->saveMany($imagesArray);
+
+
         // print_r($imagesArray);
 
         // $gallery->galleryHasManyImages()->saveMany([
@@ -184,9 +187,9 @@ class GalleryController extends Controller
         //     }
         //      ]);
 
-        foreach ($imagesArray as $imageObject) {
-            $gallery->galleryHasManyImages()->save($imageObject);
-        }
+        // foreach ($imagesArray as $imageObject) {
+        //     $gallery->galleryHasManyImages()->save($imageObject);
+        // }
 
         
         
@@ -201,6 +204,13 @@ class GalleryController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $gallery = Gallery::with('galleryHasManyImages')->find($id);
+       
+       if(!isset($gallery)) {
+            abort(404, "Gallery not found");
+        }
+
+       $gallery->galleryHasManyImages()->delete();
+       $gallery->delete();
     }
 }

@@ -23,3 +23,4 @@ Route::middleware('jwt')->get('/galleries', 'GalleryController@index');
 Route::middleware('jwt')->get('/galleries/{id}', 'GalleryController@show');
 Route::middleware('jwt')->post('/galleries', 'GalleryController@store');
 Route::middleware('jwt')->put('/galleries/{id}', 'GalleryController@update');
+Route::middleware('jwt')->delete('/galleries/{id}', 'GalleryController@destroy');
