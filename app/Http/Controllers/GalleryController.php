@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Gallery;
 use App\Image;
+use App\User;
 
 use Validator, DB, Hash;
 use JWTAuth;
@@ -18,7 +19,7 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        return Gallery::with('galleryHasOneImage')->get();
+        return Gallery::with(['galleryHasOneImage','user'])->orderBy('created_at','desc')->get();
     }
 
     /**
@@ -205,7 +206,7 @@ class GalleryController extends Controller
     public function destroy($id)
     {
        $gallery = Gallery::with('galleryHasManyImages')->find($id);
-       
+
        if(!isset($gallery)) {
             abort(404, "Gallery not found");
         }
