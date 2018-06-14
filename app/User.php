@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
-    public function userHasManygalleries()
+    public function userHasManyGalleries()
     {
         return $this->hasMany('App\Gallery');
     }

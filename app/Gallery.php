@@ -23,6 +23,6 @@ class Gallery extends Model
 
     public function galleryHasOneImage()
     {
-        return $this->hasOne('App\Image');
+        return $this->hasOne('App\Image')->orderBy('id')->latest();
     }
 }

@@ -48,6 +48,7 @@ class LoginController extends Controller
     {
         // grab credentials from the request
         $login_credentials = $request->only(['email', 'password']);
+        
         try {
             // attempt to verify the credentials and create a token for the user
             if (!$token = \JWTAuth::attempt($login_credentials)) {
@@ -57,7 +58,9 @@ class LoginController extends Controller
             // something went wrong whilst attempting to encode the token
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        // all good so return the token
+        // $password = $request->only('password');
+        // $user_id = User::where('password', $login_credentialspassword)->first()->Id;
+        // var_dump($user_id);
         return response()->json(compact('token'));
     }
 

@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::with('userHasManygalleries')->get();
+        
     }
 
     /**
@@ -51,7 +51,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        return User::with('userHasManyGalleries.galleryHasOneImage')->find($id);
     }
 
     /**
