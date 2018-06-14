@@ -15,4 +15,9 @@ class Gallery extends Model
     {
     	return $this->belongsTo(User::class);
     } 
+
+    public function galleryHasOneImage()
+    {
+        return $this->hasOne('App\Image');
+    }
 }
