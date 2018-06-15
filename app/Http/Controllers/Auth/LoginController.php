@@ -48,20 +48,25 @@ class LoginController extends Controller
     {
         // grab credentials from the request
         $login_credentials = $request->only(['email', 'password']);
-        
+        // $user = JWTAuth::toUser($token);
+        // $user = Auth::user();
         try {
             // attempt to verify the credentials and create a token for the user
             if (!$token = \JWTAuth::attempt($login_credentials)) {
+
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } catch (JWTException $e) {
             // something went wrong whilst attempting to encode the token
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        // $password = $request->only('password');
-        // $user_id = User::where('password', $login_credentialspassword)->first()->Id;
-        // var_dump($user_id);
-        return response()->json(compact('token'));
+        
+        JWTAuth::setToken($token);
+        $user = JWTAuth::toUser($token);
+        // var_dump($user);
+        
+        return response()->json(compact('token', 'user'));
+        // return response()->json(compact('token'));
     }
 
     // // Ne moze ovde zbog logout middleware exceptiona
