@@ -105,7 +105,7 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-        $gallery = Gallery::with(['galleryHasManyImages', 'user'])->find($id);
+        $gallery = Gallery::with(['galleryHasManyImages', 'user', 'comments'])->find($id);
 
         if(!isset($gallery)) {
             abort(404, "Gallery not found");

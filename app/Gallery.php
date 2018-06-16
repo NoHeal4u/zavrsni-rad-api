@@ -25,4 +25,9 @@ class Gallery extends Model
     {
         return $this->hasOne('App\Image')->orderBy('id')->latest();
     }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Comment');
+    }
 }
