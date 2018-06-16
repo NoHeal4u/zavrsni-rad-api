@@ -31,7 +31,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function userHasManyGalleries()
     {
-        return $this->hasMany('App\Gallery');
+        return $this->hasMany('App\Gallery')->orderBy('created_at','desc');
     }
 
     public function userHasManyComments()
