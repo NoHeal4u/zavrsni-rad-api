@@ -25,3 +25,5 @@ Route::middleware('jwt')->post('/galleries', 'GalleryController@store');
 Route::middleware('jwt')->put('/galleries/{id}', 'GalleryController@update');
 Route::middleware('jwt')->delete('/galleries/{id}', 'GalleryController@destroy');
 Route::middleware('jwt')->get('/users/{id}', 'UserController@show');
+Route::middleware('jwt')->post('/comments', 'CommentController@store');
+Route::middleware('jwt')->delete('/comments/{id}', 'CommentController@destroy');

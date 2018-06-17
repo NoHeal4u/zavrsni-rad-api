@@ -11,8 +11,8 @@ class Comment extends Model
     	return $this->belongsTo(Gallery::class);
     } 
 
-    public function CommentBelongsToUser()
+    public function user()
     {
-    	return $this->belongsTo(user::class);
+    	return $this->belongsTo(User::class);
     } 
 }

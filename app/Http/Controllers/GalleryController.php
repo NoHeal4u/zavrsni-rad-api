@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Gallery;
 use App\Image;
 use App\User;
+use App\Comment;
 
 use Validator, DB, Hash;
 use JWTAuth;
@@ -106,12 +107,17 @@ class GalleryController extends Controller
     public function show($id)
     {
         $gallery = Gallery::with(['galleryHasManyImages', 'user', 'comments'])->find($id);
+        $comments = Comment::with(['user'])->where('gallery_id',$id)->get();
 
         if(!isset($gallery)) {
             abort(404, "Gallery not found");
         }
+        // print_r($comments);
+        if(!isset($comments)) {
+            abort(404, "Comments not found");
+        }
 
-        return $gallery;
+        return compact('gallery', 'comments');
     }
 
     /**
